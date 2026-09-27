@@ -34,6 +34,7 @@ const Header = () => {
                 top="0"
                 zIndex="sticky"
                 borderBottomWidth="1px"
+                backgroundColor={"white"}
             >
                 <Container maxW="7xl">
                     <Flex align={"center"} justify={"space-between"} h={16} gap={"4"}>
@@ -88,14 +89,13 @@ const Header = () => {
 const Footer = () => {
     return (
         <Box>
-            <Container>
-                <SimpleGrid columns={{ base: 1, md: 3 }}>
-                    <Stack>
-                        <Heading size="sm">Fafire Allocation</Heading>
+            <Container maxW="7xl" display={"flex"} flexDirection={"column"}>
+                <SimpleGrid columns={{ base: 1, md: 3 }} columnWidth={"max-content"} alignSelf={"center"}>
+                    <FooterColumn title="Fafire Allocation">
                         <Text fontSize="sm">
-                            CRUD usando React, TanStack Router e ChakraUI.
+                            Realizando a conexão com o Backend desenvolvido na disciplina de Arquitetura Backend, construi um CRUD utilizando conceitos praticos de Frontend com React, TanstackRouter, ChakraUI e Vite.
                         </Text>
-                    </Stack>
+                    </FooterColumn>
 
                     <FooterColumn title="Navegação">
                         {NAV_LINKS.map((link) => (
@@ -122,7 +122,7 @@ const Footer = () => {
 const FooterColumn = ({ title, children }: { title: string, children: ReactNode }) => {
     return (
         <>
-            <Stack align="flex-start">
+            <Stack align="flex-start" justifySelf={"center"}>
                 <Text
                     fontSize="sm"
                     fontWeight="semibold"
