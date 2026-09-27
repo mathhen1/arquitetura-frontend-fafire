@@ -1,6 +1,6 @@
 import { Button, CloseButton, Drawer, Field, FieldLabel, Input, Stack } from "@chakra-ui/react"
 import type React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { toaster } from "../Toaster"
 
 type SelectedRow = {
@@ -24,7 +24,7 @@ type FormData = {
     id?: string,
     name: string,
     cpf: string,
-    departmentId: string
+    departmentId?: string
 }
 
 const drawerTitles = {
@@ -35,10 +35,28 @@ const drawerTitles = {
 
 const ProfessorDrawer = ({ isOpen, setOpen, selectedRow }: ProfessorDrawerProps) => {
 
-    const [formData, setFormData] = useState<FormData>({ name: "", cpf: "", departmentId: "" })
+    const [formData, setFormData] = useState<FormData>(
+        {
+            id: selectedRow?.id ?? "",
+            name: selectedRow?.name ?? "",
+            cpf: selectedRow?.cpf ?? "",
+            departmentId: selectedRow?.department.id ?? ""
+        }
+    )
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
+
+        if (selectedRow) {
+            setFormData((data) => ({
+                ...data,
+                [name]: value,
+                id: selectedRow?.id,
+                departmentId: selectedRow?.department.id,
+                name: selectedRow?.name,
+                cpf: selectedRow?.cpf
+            }))
+        }
 
         setFormData((data) => ({
             ...data, [name]: value
@@ -47,7 +65,7 @@ const ProfessorDrawer = ({ isOpen, setOpen, selectedRow }: ProfessorDrawerProps)
 
     const handleSubmit = async () => {
         const { id } = formData
-        console.log(JSON.stringify(formData))
+        console.log(formData)
         const res = await fetch(`http://localhost:8080/professors${id ? ("/" + id) : ""}`, {
             method: id ? "PUT" : "POST",
             headers: {
@@ -91,7 +109,8 @@ const ProfessorDrawer = ({ isOpen, setOpen, selectedRow }: ProfessorDrawerProps)
                             {(!selectedRow?.action) ? undefined : (
                                 <Field.Root required>
                                     <FieldLabel>Id</FieldLabel>
-                                    <Input readOnly={selectedRow?.action === "view"} defaultValue={selectedRow?.id} />
+                                    <Input readOnly defaultValue={selectedRow?.id}
+                                    />
                                 </Field.Root>
                             )}
 
@@ -110,10 +129,11 @@ const ProfessorDrawer = ({ isOpen, setOpen, selectedRow }: ProfessorDrawerProps)
                                 <Input readOnly={selectedRow?.action === "view"} placeholder="Digite o Id do departamento" defaultValue={selectedRow?.department.id} onChange={handleChange} name="departmentId" />
                             </Field.Root>
 
-                            {selectedRow?.action === "view" && (
+                            {(!selectedRow?.action) ? undefined : (
                                 <Field.Root required>
                                     <FieldLabel>Nome Departamento</FieldLabel>
-                                    <Input readOnly defaultValue={selectedRow?.department.name} />
+                                    <Input readOnly defaultValue={selectedRow?.department.name}
+                                    />
                                 </Field.Root>
                             )}
                         </Stack>
