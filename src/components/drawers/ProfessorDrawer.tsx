@@ -1,12 +1,16 @@
-import { Button, CloseButton, Drawer, Field, FieldLabel, Input, Stack, Textarea } from "@chakra-ui/react"
-import { professorsMock } from "../../lib/mockdb"
-import { X } from "lucide-react"
+import { Button, CloseButton, Drawer, Field, FieldLabel, Input, Stack } from "@chakra-ui/react"
 import type React from "react"
+import { useState } from "react"
+import { toaster } from "../Toaster"
 
 type SelectedRow = {
-    id: number,
+    id: string,
     name: string,
-    desc: string,
+    cpf: string,
+    department: {
+        id: string,
+        name: string
+    }
     action: "edit" | "view"
 } | null
 
@@ -16,6 +20,13 @@ type ProfessorDrawerProps = {
     selectedRow?: SelectedRow
 }
 
+type FormData = {
+    id?: string,
+    name: string,
+    cpf: string,
+    departmentId: string
+}
+
 const drawerTitles = {
     create: "Create Professor",
     edit: "Edit Professor",
@@ -23,6 +34,43 @@ const drawerTitles = {
 }
 
 const ProfessorDrawer = ({ isOpen, setOpen, selectedRow }: ProfessorDrawerProps) => {
+
+    const [formData, setFormData] = useState<FormData>({ name: "", cpf: "", departmentId: "" })
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target
+
+        setFormData((data) => ({
+            ...data, [name]: value
+        }))
+    }
+
+    const handleSubmit = async () => {
+        const { id } = formData
+        console.log(JSON.stringify(formData))
+        const res = await fetch(`http://localhost:8080/professors${id ? ("/" + id) : ""}`, {
+            method: id ? "PUT" : "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData)
+        })
+
+        if (!res.ok) {
+            toaster.create({
+                title: "Erro na requisição",
+            })
+            return
+        }
+
+        toaster.create({
+            title: "Professor salvo!",
+            description: "Requisição foi realizada com sucesso!"
+        })
+
+        setOpen(false)
+        window.location.reload
+    }
 
     return (
         <Drawer.Root open={isOpen} onOpenChange={e => setOpen(e.open)}>
@@ -40,22 +88,34 @@ const ProfessorDrawer = ({ isOpen, setOpen, selectedRow }: ProfessorDrawerProps)
 
                     <Drawer.Body>
                         <Stack>
-                            {selectedRow?.action === "view" && (
+                            {(!selectedRow?.action) ? undefined : (
                                 <Field.Root required>
                                     <FieldLabel>Id</FieldLabel>
-                                    <Input readOnly defaultValue={selectedRow?.id} />
+                                    <Input readOnly={selectedRow?.action === "view"} defaultValue={selectedRow?.id} />
                                 </Field.Root>
                             )}
 
                             <Field.Root required>
                                 <FieldLabel>Nome</FieldLabel>
-                                <Input readOnly={selectedRow?.action === "view"} placeholder="Digite a descrição" defaultValue={selectedRow?.name} />
+                                <Input readOnly={selectedRow?.action === "view"} placeholder="Digite a descrição" defaultValue={selectedRow?.name} onChange={handleChange} name="name" />
                             </Field.Root>
 
                             <Field.Root required>
-                                <FieldLabel>Descrição</FieldLabel>
-                                <Textarea readOnly={selectedRow?.action === "view"} placeholder="Digite a descrição" defaultValue={selectedRow?.name} />
+                                <FieldLabel>CPF</FieldLabel>
+                                <Input readOnly={selectedRow?.action === "view"} placeholder="Digite a descrição" defaultValue={selectedRow?.cpf} onChange={handleChange} name="cpf" />
                             </Field.Root>
+
+                            <Field.Root required>
+                                <FieldLabel>Departamento ID</FieldLabel>
+                                <Input readOnly={selectedRow?.action === "view"} placeholder="Digite o Id do departamento" defaultValue={selectedRow?.department.id} onChange={handleChange} name="departmentId" />
+                            </Field.Root>
+
+                            {selectedRow?.action === "view" && (
+                                <Field.Root required>
+                                    <FieldLabel>Nome Departamento</FieldLabel>
+                                    <Input readOnly defaultValue={selectedRow?.department.name} />
+                                </Field.Root>
+                            )}
                         </Stack>
                     </Drawer.Body>
 
@@ -65,7 +125,7 @@ const ProfessorDrawer = ({ isOpen, setOpen, selectedRow }: ProfessorDrawerProps)
                         </Button>
 
                         {selectedRow?.action !== "view" && (
-                            <Button>
+                            <Button onClick={handleSubmit}>
                                 Submit
                             </Button>
                         )}
