@@ -33,7 +33,7 @@ const ListView = (props: ListViewProps) => {
                     <ArrowLeft />
                 </IconButton>
 
-                <IconButton disabled={!rows.length} onClick={() => {
+                <IconButton disabled={!rows.length || rows.length < 5} onClick={() => {
                     props.setPage((data) => (
                         data = data + 1
                     ))
