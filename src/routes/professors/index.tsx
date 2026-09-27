@@ -21,6 +21,7 @@ function RouteComponent() {
 
     const [open, setOpen] = useState<boolean>(false)
     const [selectedRow, setSelectedRow] = useState(null)
+    const [page, setPage] = useState<number>(0)
 
     const cols: Column[] = useMemo(() => [
         {
@@ -79,7 +80,7 @@ function RouteComponent() {
                         setOpen(true)
                     }, label: "Add Professor"
                 }}>
-                <ListView columns={cols} resource="/professors" />
+                <ListView columns={cols} resource="/professors" page={page} setPage={setPage} />
             </Page>
 
             <ProfessorDrawer isOpen={open} setOpen={setOpen} selectedRow={selectedRow} />
