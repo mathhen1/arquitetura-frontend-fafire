@@ -30,8 +30,16 @@ function RouteComponent() {
             key: "name",
             label: "Nome"
         }, {
-            key: "desc",
-            label: "Descrição"
+            key: "cpf",
+            label: "CPF"
+        }, {
+            key: "department",
+            label: "Departamento ID",
+            render: (department) => <p>{department.id}</p>
+        }, {
+            key: "department",
+            label: "Departamento",
+            render: (department) => <p>{department.name}</p>
         }, {
             key: "actions",
             label: "Actions",
@@ -71,7 +79,7 @@ function RouteComponent() {
                         setOpen(true)
                     }, label: "Add Professor"
                 }}>
-                <ListView columns={cols} />
+                <ListView columns={cols} resource="/professors" />
             </Page>
 
             <ProfessorDrawer isOpen={open} setOpen={setOpen} selectedRow={selectedRow} />
