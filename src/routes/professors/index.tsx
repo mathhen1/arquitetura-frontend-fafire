@@ -1,15 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
-import { professorsMock } from '../../lib/mockdb'
-import { Box, IconButton, Table } from '@chakra-ui/react'
-import { Eye, Pencil, Trash } from "lucide-react"
+import { useMemo, useState } from 'react'
 import Page from '../../components/Page'
+import ListView from '../../components/ListView'
+import type { Column } from '../../components/Table'
+import { Box, IconButton } from '@chakra-ui/react'
+import { Eye, Pencil, Trash } from 'lucide-react'
+import ProfessorDrawer from '../../components/drawers/ProfessorDrawer'
 
 export const Route = createFileRoute('/professors/')({
     component: RouteComponent,
 })
 
-type Professor = {
+export type Professor = {
     id: number,
     name: string,
     desc: string
@@ -17,65 +19,62 @@ type Professor = {
 
 function RouteComponent() {
 
-    const [professors, setProfessors] = useState<Professor[]>([])
+    const [open, setOpen] = useState<boolean>(false)
+    const [selectedRow, setSelectedRow] = useState(null)
 
-    useEffect(() => {
-        setProfessors(professorsMock)
-    }, [])
+    const cols: Column[] = useMemo(() => [
+        {
+            key: "id",
+            label: "Id"
+        }, {
+            key: "name",
+            label: "Nome"
+        }, {
+            key: "desc",
+            label: "Descrição"
+        }, {
+            key: "actions",
+            label: "Actions",
+            render: (_, row) => (
+                <Box>
+                    <IconButton colorPalette={"blue"} mr={3} onClick={() => {
+                        setSelectedRow({ ...row, action: "view" })
+                        setOpen(true)
+                    }}>
+                        <Eye />
+                    </IconButton>
+
+                    <IconButton colorPalette={"gray"} mr={3} onClick={() => {
+                        setSelectedRow({ ...row, action: "edit" })
+                        setOpen(true)
+                    }}>
+                        <Pencil />
+                    </IconButton>
+
+                    <IconButton colorPalette={"red"} mr={3} onClick={() => {
+                        setSelectedRow({ ...row, action: "delete" })
+                    }}>
+                        <Trash />
+                    </IconButton>
+                </Box>
+
+            )
+        }
+    ], [open])
 
     return (
-        <Page subtitle="Manage Professors from Fafire" title="Professors" 
-        action={{onClick: () => {
-            alert("Bora")
-        }, label: "Add Professor"}}>
-            <Table.Root>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.ColumnHeader >
-                            Id
-                        </Table.ColumnHeader >
-                        <Table.ColumnHeader >
-                            Nome
-                        </Table.ColumnHeader >
-                        <Table.ColumnHeader >
-                            Descrição
-                        </Table.ColumnHeader>
-                    </Table.Row>
-                </Table.Header>
+        <>
+            <Page subtitle="Manage Professors from Fafire" title="Professors"
+                action={{
+                    onClick: () => {
+                        setSelectedRow(null)
+                        setOpen(true)
+                    }, label: "Add Professor"
+                }}>
+                <ListView columns={cols} />
+            </Page>
 
-                <Table.Body>
-                    {professors.map(p => (
-                        <Table.Row>
-                            <Table.Cell>
-                                {p.id}
-                            </Table.Cell>
-                            <Table.Cell>
-                                {p.name}
-                            </Table.Cell>
-                            <Table.Cell>
-                                {p.desc}
-                            </Table.Cell>
-                            <Box>
-                                <Table.Cell>
-                                    <IconButton colorPalette="blue" aria-label="View Professor">
-                                        <Eye />
-                                    </IconButton>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <IconButton colorPalette="gray" aria-label="Edit Professor">
-                                        <Pencil />
-                                    </IconButton>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <IconButton colorPalette="red" aria-label="Delete Professor">
-                                        <Trash />
-                                    </IconButton>
-                                </Table.Cell>
-                            </Box>
-                        </Table.Row>
-                    ))}
-                </Table.Body>
-            </Table.Root>
-        </Page>
+            <ProfessorDrawer isOpen={open} setOpen={setOpen} selectedRow={selectedRow} />
+        </>
     )
 }
