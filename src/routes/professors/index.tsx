@@ -23,6 +23,16 @@ function RouteComponent() {
     const [selectedRow, setSelectedRow] = useState(null)
     const [page, setPage] = useState<number>(0)
 
+    const handleDelete = (row: any) => {
+        console.log("Handle Delete console: ", row.id)
+        if (!confirm(`Tem certeza que deseja apagar o professor "${row.name}"?`)) {
+            return
+        }
+        fetch(`http://localhost:8080/professors/${row.id}`, {
+            method: "DELETE"
+        })
+    }
+
     const cols: Column[] = useMemo(() => [
         {
             key: "id",
@@ -61,7 +71,8 @@ function RouteComponent() {
                     </IconButton>
 
                     <IconButton colorPalette={"red"} mr={3} onClick={() => {
-                        setSelectedRow({ ...row, action: "delete" })
+                        // setSelectedRow({ ...row, action: "delete" })
+                        handleDelete(row)
                     }}>
                         <Trash />
                     </IconButton>
