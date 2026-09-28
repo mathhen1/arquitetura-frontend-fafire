@@ -1,6 +1,6 @@
 import { Button, CloseButton, Drawer, Field, FieldLabel, Input, Stack } from "@chakra-ui/react"
 import type React from "react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { toaster } from "../Toaster"
 
 type SelectedRow = {
@@ -17,7 +17,8 @@ type SelectedRow = {
 type ProfessorDrawerProps = {
     isOpen: boolean,
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    selectedRow?: SelectedRow
+    selectedRow?: SelectedRow,
+    setAction: React.Dispatch<React.SetStateAction<number>>
 }
 
 type FormData = {
@@ -33,7 +34,7 @@ const drawerTitles = {
     view: "View Professor"
 }
 
-const ProfessorDrawer = ({ isOpen, setOpen, selectedRow }: ProfessorDrawerProps) => {
+const ProfessorDrawer = ({ isOpen, setOpen, selectedRow, setAction }: ProfessorDrawerProps) => {
 
     const [formData, setFormData] = useState<FormData>(
         {
@@ -86,8 +87,10 @@ const ProfessorDrawer = ({ isOpen, setOpen, selectedRow }: ProfessorDrawerProps)
             description: "Requisição foi realizada com sucesso!"
         })
 
+        setAction((data) => (
+            data = data + 1
+        ))
         setOpen(false)
-        window.location.reload
     }
 
     return (

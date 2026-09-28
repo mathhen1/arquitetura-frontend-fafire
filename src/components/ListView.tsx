@@ -9,13 +9,24 @@ type ListViewProps = {
     columns: Column[],
     resource: string,
     page: number,
-    setPage: React.Dispatch<React.SetStateAction<number>>
+    setPage: React.Dispatch<React.SetStateAction<number>>,
+    action: number
 }
 
 const ListView = (props: ListViewProps) => {
 
     const [rows, setRows] = useState<Professor[]>([])
     const [loading, setLoading] = useState<boolean>(true)
+
+    useEffect(() => {
+
+        setLoading(true)
+
+        fetch(`http://localhost:8080${props.resource}?page=${props.page}`, { method: "GET" })
+            .then(res => res.json())
+            .then(data => setRows(data))
+            .finally(() => setLoading(false))
+    }, [props.page, props.action])
 
     const NavigationPages = () => {
 
@@ -43,16 +54,6 @@ const ListView = (props: ListViewProps) => {
             </HStack>
         )
     }
-
-    useEffect(() => {
-
-        setLoading(true)
-
-        fetch(`http://localhost:8080${props.resource}?page=${props.page}`, { method: "GET" })
-            .then(res => res.json())
-            .then(data => setRows(data))
-            .finally(() => setLoading(false))
-    }, [props.page])
 
     if (loading) {
         return (

@@ -22,6 +22,7 @@ function RouteComponent() {
     const [open, setOpen] = useState<boolean>(false)
     const [selectedRow, setSelectedRow] = useState(null)
     const [page, setPage] = useState<number>(0)
+    const [action, setAction] = useState<number>(0)
 
     const handleDelete = (row: any) => {
         console.log("Handle Delete console: ", row.id)
@@ -30,7 +31,9 @@ function RouteComponent() {
         }
         fetch(`http://localhost:8080/professors/${row.id}`, {
             method: "DELETE"
-        })
+        }).then(() => setAction((data) => (
+            data = data + 1
+        )))
     }
 
     const cols: Column[] = useMemo(() => [
@@ -71,7 +74,6 @@ function RouteComponent() {
                     </IconButton>
 
                     <IconButton colorPalette={"red"} mr={3} onClick={() => {
-                        // setSelectedRow({ ...row, action: "delete" })
                         handleDelete(row)
                     }}>
                         <Trash />
@@ -91,10 +93,13 @@ function RouteComponent() {
                         setOpen(true)
                     }, label: "Add Professor"
                 }}>
-                <ListView columns={cols} resource="/professors" page={page} setPage={setPage} />
+                <ListView columns={cols} resource="/professors"
+                    page={page} setPage={setPage}
+                    action={action} />
             </Page>
 
-            <ProfessorDrawer isOpen={open} setOpen={setOpen} selectedRow={selectedRow} />
+            <ProfessorDrawer isOpen={open} setOpen={setOpen} selectedRow={selectedRow}
+                setAction={setAction} />
         </>
     )
 }
