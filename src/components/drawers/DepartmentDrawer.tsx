@@ -38,10 +38,8 @@ const DepartmentDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Deparment
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
 
-        if (selectedRow) {
-            setFormData((data) => ({
-                ...data,
-                [name]: value,
+        if (selectedRow?.action === "edit") {
+            setFormData(() => ({
                 id: selectedRow?.id,
                 name: selectedRow?.name
             }))
@@ -54,9 +52,8 @@ const DepartmentDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Deparment
 
     const handleSubmit = async () => {
         const { id } = formData
-        console.log(formData)
-        const res = await fetch(`http://localhost:8080/departments${id ? ("/" + id) : ""}`, {
-            method: id ? "PUT" : "POST",
+        const res = await fetch(`http://localhost:8080/departments${(!selectedRow?.action) ? "" : ("/" + id)}`, {
+            method: (!selectedRow?.action) ? "POST" : "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
