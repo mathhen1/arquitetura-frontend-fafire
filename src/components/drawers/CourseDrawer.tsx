@@ -108,7 +108,7 @@ const CourseDrawer = ({ isOpen, selectedRow, setOpen, setAction }: CourseDrawerP
 
                             <Field.Root required>
                                 <FieldLabel>Nome</FieldLabel>
-                                <Input readOnly={selectedRow?.action === "view"} placeholder="Digite a descrição" defaultValue={selectedRow?.name} onChange={handleChange} name="name" />
+                                <Input readOnly={selectedRow?.action === "view"} placeholder="Digite o nome do Curso" defaultValue={selectedRow?.name} onChange={handleChange} name="name" />
                             </Field.Root>
                         </Stack>
                     </Drawer.Body>

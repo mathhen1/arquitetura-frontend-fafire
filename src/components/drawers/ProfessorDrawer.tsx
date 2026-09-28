@@ -119,17 +119,17 @@ const ProfessorDrawer = ({ isOpen, setOpen, selectedRow, setAction }: ProfessorD
 
                             <Field.Root required>
                                 <FieldLabel>Nome</FieldLabel>
-                                <Input readOnly={selectedRow?.action === "view"} placeholder="Digite a descrição" defaultValue={selectedRow?.name} onChange={handleChange} name="name" />
+                                <Input readOnly={selectedRow?.action === "view"} placeholder="Digite o nome do Professor" defaultValue={selectedRow?.name} onChange={handleChange} name="name" />
                             </Field.Root>
 
                             <Field.Root required>
                                 <FieldLabel>CPF</FieldLabel>
-                                <Input readOnly={selectedRow?.action === "view"} placeholder="Digite a descrição" defaultValue={selectedRow?.cpf} onChange={handleChange} name="cpf" />
+                                <Input readOnly={selectedRow?.action === "view"} placeholder="Digite o CPF" defaultValue={selectedRow?.cpf} onChange={handleChange} name="cpf" />
                             </Field.Root>
 
                             <Field.Root required>
                                 <FieldLabel>Departamento ID</FieldLabel>
-                                <Input readOnly={selectedRow?.action === "view"} placeholder="Digite o Id do departamento" defaultValue={selectedRow?.department.id} onChange={handleChange} name="departmentId" />
+                                <Input readOnly={selectedRow?.action === "view"} placeholder="Digite o Id do Departamento" defaultValue={selectedRow?.department.id} onChange={handleChange} name="departmentId" />
                             </Field.Root>
 
                             {(!selectedRow?.action) ? undefined : (

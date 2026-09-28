@@ -152,12 +152,12 @@ const AllocationDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Allocatio
 
                             {selectedRow?.action === "view" && <Field.Root required>
                                 <FieldLabel>Nome do Professor</FieldLabel>
-                                <Input readOnly placeholder="Digite o Id do Professor" defaultValue={selectedRow?.professor.name} onChange={handleChange} name="professorName" />
+                                <Input readOnly defaultValue={selectedRow?.professor.name} onChange={handleChange} name="professorName" />
                             </Field.Root>}
 
                             {selectedRow?.action === "view" && <Field.Root required>
                                 <FieldLabel>CPF do Professor</FieldLabel>
-                                <Input readOnly placeholder="Digite o Id do Professor" defaultValue={selectedRow?.professor.name} onChange={handleChange} name="professorName" />
+                                <Input readOnly defaultValue={selectedRow?.professor.cpf} onChange={handleChange} name="professorCpf" />
                             </Field.Root>}
 
                             <Field.Root required>
@@ -167,17 +167,17 @@ const AllocationDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Allocatio
 
                             {selectedRow?.action === "view" && <Field.Root required>
                                 <FieldLabel>Nome do Curso</FieldLabel>
-                                <Input readOnly placeholder="Digite o Id do Curso" defaultValue={selectedRow?.course.name} onChange={handleChange} name="courseName" />
+                                <Input readOnly defaultValue={selectedRow?.course.name} onChange={handleChange} name="courseName" />
                             </Field.Root>}
 
                             {selectedRow?.action === "view" && <Field.Root required>
                                 <FieldLabel>Departamento Id</FieldLabel>
-                                <Input readOnly placeholder="Digite o Id do Curso" defaultValue={selectedRow?.professor.department.id} onChange={handleChange} name="departmentId" />
+                                <Input readOnly defaultValue={selectedRow?.professor.department.id} onChange={handleChange} name="departmentId" />
                             </Field.Root>}
 
                             {selectedRow?.action === "view" && <Field.Root required>
                                 <FieldLabel>Nome do Departamento</FieldLabel>
-                                <Input readOnly placeholder="Digite o Id do Curso" defaultValue={selectedRow?.professor.department.name} onChange={handleChange} name="departmentName" />
+                                <Input readOnly defaultValue={selectedRow?.professor.department.name} onChange={handleChange} name="departmentName" />
                             </Field.Root>}
                         </Stack>
                     </Drawer.Body>

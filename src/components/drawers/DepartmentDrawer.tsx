@@ -107,7 +107,7 @@ const DepartmentDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Deparment
 
                             <Field.Root required>
                                 <FieldLabel>Nome</FieldLabel>
-                                <Input readOnly={selectedRow?.action === "view"} placeholder="Digite a descrição" defaultValue={selectedRow?.name} onChange={handleChange} name="name" />
+                                <Input readOnly={selectedRow?.action === "view"} placeholder="Digite o nome do Departamento" defaultValue={selectedRow?.name} onChange={handleChange} name="name" />
                             </Field.Root>
                         </Stack>
                     </Drawer.Body>
