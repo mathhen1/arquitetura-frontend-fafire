@@ -19,7 +19,7 @@ function RouteComponent() {
 
   const handleDelete = (row: any) => {
     console.log("Handle Delete console: ", row.id)
-    if (!confirm(`Tem certeza que deseja apagar o professor "${row.name}"?`)) {
+    if (!confirm(`Tem certeza que deseja apagar o departamento "${row.name}"?`)) {
       return
     }
     fetch(`http://localhost:8080/departments/${row.id}`, {

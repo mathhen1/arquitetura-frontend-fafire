@@ -18,7 +18,7 @@ function RouteComponent() {
     const [selectedRow, setSelectedRow] = useState(null)
 
     const handleDelete = (row: any) => {
-        if (!confirm(`Tem certeza que deseja apagar a alocação "${row.name}"?`)) {
+        if (!confirm(`Tem certeza que deseja apagar a alocação ${row.id}?`)) {
             return
         }
         fetch(`http://localhost:8080/allocations/${row.id}`, {
