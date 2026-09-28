@@ -13,6 +13,7 @@ function RouteComponent() {
     const [page, setPage] = useState<number>(0)
     const [action, setAction] = useState<number>(0)
     const [open, setOpen] = useState<boolean>(false)
+    const [selectedRow, setSelectedRow] = useState(null)
 
     const cols: Column[] = useMemo(() => [
         {
@@ -27,13 +28,19 @@ function RouteComponent() {
     return (
         <>
             <Page title="Course" subtitle="Course Management" action={
-                { label: "Add Course" }
+                {
+                    label: "Add Course", onClick: () => {
+                        setSelectedRow(null)
+                        setOpen(true)
+                    }
+                }
             }>
                 <ListView resource="/courses" setPage={setPage} action={action}
                     page={page} columns={cols} />
 
             </Page >
-            <CourseDrawer />
+            <CourseDrawer isOpen={open} selectedRow={selectedRow}
+                setAction={setAction} setOpen={setOpen} />
         </>
     )
 }
