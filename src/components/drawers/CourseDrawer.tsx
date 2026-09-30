@@ -66,6 +66,9 @@ const CourseDrawer = ({ isOpen, selectedRow, setOpen, setAction }: CourseDrawerP
             const erro = validatedFields.error.flatten().fieldErrors
             setErrors(erro.name?.[0] ?? "")
             setHasError(true)
+            setTimeout(() => {
+                setHasError(false)
+            }, 3000)
             return
         }
         setHasError(false)
