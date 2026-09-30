@@ -37,6 +37,7 @@ const drawerTitles = {
 
 const validateData = z.object({
     name: z.string().min(1, { message: "O campo não pode ser vazio" })
+        .min(10, { message: "O campo Nome precisa ter ao menos 10 caracteres" })
         .regex(/^([^0-9]*)$/, { message: "O campo Nome deve conter apenas letras" })
     ,
     cpf: z.string().min(1, { message: "O campo não pode ser vazio" })

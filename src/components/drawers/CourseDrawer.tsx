@@ -29,7 +29,8 @@ type FormData = {
 }
 
 const validateFields = z.object({
-    name: z.string().regex(/^([^0-9]*)$/, { message: "O campo digitado deve conter apenas letras" })
+    name: z.string().min(1, { message: "Este campo não pode ser vazio" })
+        .regex(/^([^0-9]*)$/, { message: "Este campo deve conter apenas letras" })
 })
 
 const CourseDrawer = ({ isOpen, selectedRow, setOpen, setAction }: CourseDrawerProps) => {
