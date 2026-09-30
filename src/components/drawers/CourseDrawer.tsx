@@ -2,6 +2,7 @@ import { Button, CloseButton, Drawer, Field, FieldLabel, Input, Stack } from "@c
 import type React from "react"
 import { toaster } from "../Toaster"
 import { useState } from "react"
+import { z } from "zod"
 
 type SelectedRow = {
     id: string,
@@ -27,6 +28,10 @@ type FormData = {
     name: string
 }
 
+const validateFields = z.object({
+    name: z.string().regex(/^([^0-9]*)$/, { message: "O campo digitado deve conter apenas letras" })
+})
+
 const CourseDrawer = ({ isOpen, selectedRow, setOpen, setAction }: CourseDrawerProps) => {
 
     const [formData, setFormData] = useState<FormData>(
@@ -50,8 +55,21 @@ const CourseDrawer = ({ isOpen, selectedRow, setOpen, setAction }: CourseDrawerP
             ...data, [name]: value
         }))
     }
+    const [errors, setErrors] = useState<string>("")
+    const [hasError, setHasError] = useState<boolean>(false)
 
     const handleSubmit = async () => {
+
+        const validatedFields = validateFields.safeParse(formData)
+
+        if (!validatedFields.success) {
+            const erro = validatedFields.error.flatten().fieldErrors
+            setErrors(erro.name?.[0] ?? "")
+            setHasError(true)
+            return
+        }
+        setHasError(false)
+
         const { id } = formData
         const res = await fetch(`http://localhost:8080/courses${(!selectedRow) ? "" : ("/" + id)}`, {
             method: (!selectedRow) ? "POST" : "PUT",
@@ -103,9 +121,10 @@ const CourseDrawer = ({ isOpen, selectedRow, setOpen, setAction }: CourseDrawerP
                                 </Field.Root>
                             )}
 
-                            <Field.Root required>
+                            <Field.Root required invalid={hasError}>
                                 <FieldLabel>Nome</FieldLabel>
                                 <Input readOnly={selectedRow?.action === "view"} placeholder="Digite o nome do Curso" defaultValue={selectedRow?.name} onChange={handleChange} name="name" />
+                                <Field.ErrorText>{errors}</Field.ErrorText>
                             </Field.Root>
                         </Stack>
                     </Drawer.Body>
