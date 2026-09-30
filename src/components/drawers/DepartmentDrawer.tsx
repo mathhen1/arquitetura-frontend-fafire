@@ -2,6 +2,7 @@ import { Button, CloseButton, Drawer, Field, FieldLabel, Input, Stack } from "@c
 import type React from "react"
 import { toaster } from "../Toaster"
 import { useState } from "react"
+import { z } from "zod"
 
 type SelectedRow = {
     id: string,
@@ -27,6 +28,10 @@ type FormData = {
     name: string
 }
 
+const validateData = z.object({
+    name: z.string().regex(/^([^0-9]*)$/, { message: "O campo digitado deve conter apenas letras" })
+})
+
 const DepartmentDrawer = ({ isOpen, selectedRow, setOpen, setAction }: DeparmentDrawerProps) => {
     const [formData, setFormData] = useState<FormData>(
         {
@@ -34,6 +39,9 @@ const DepartmentDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Deparment
             name: selectedRow?.name ?? ""
         }
     )
+
+    const [errors, setErrors] = useState<string>("")
+    const [hasError, setHasError] = useState<boolean>(false)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
@@ -51,6 +59,20 @@ const DepartmentDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Deparment
     }
 
     const handleSubmit = async () => {
+
+        const validatedData = validateData.safeParse(formData)
+
+        if (!validatedData.success) {
+            const erro = validatedData.error.flatten().fieldErrors
+            setErrors(erro.name?.[0] ?? "")
+            setHasError(true)
+            setTimeout(() => {
+                setHasError(false)
+            }, 3000)
+            return
+        }
+        setHasError(false)
+
         const { id } = formData
         const res = await fetch(`http://localhost:8080/departments${(!selectedRow?.action) ? "" : ("/" + id)}`, {
             method: (!selectedRow?.action) ? "POST" : "PUT",
@@ -102,9 +124,10 @@ const DepartmentDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Deparment
                                 </Field.Root>
                             )}
 
-                            <Field.Root required>
+                            <Field.Root required invalid={hasError}>
                                 <FieldLabel>Nome</FieldLabel>
                                 <Input readOnly={selectedRow?.action === "view"} placeholder="Digite o nome do Departamento" defaultValue={selectedRow?.name} onChange={handleChange} name="name" />
+                                <Field.ErrorText>{errors}</Field.ErrorText>
                             </Field.Root>
                         </Stack>
                     </Drawer.Body>
