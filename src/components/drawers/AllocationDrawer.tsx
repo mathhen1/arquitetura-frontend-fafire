@@ -2,6 +2,7 @@ import { Button, CloseButton, Drawer, Field, FieldLabel, Input, Stack } from "@c
 import type React from "react"
 import { toaster } from "../Toaster"
 import { useState } from "react"
+import { z } from "zod"
 
 type SelectedRow = {
     id: string,
@@ -46,6 +47,27 @@ type FormData = {
     courseId: string,
 }
 
+const validateData = z.object({
+    startHour: z.string().min(1, { message: "O campo não pode ser vazio" })
+        .pipe(z.iso.time({ message: "Digite a hora corretamente" }))
+    ,
+    endHour: z.string().min(1, { message: "O campo não pode ser vazio" })
+        .pipe(z.iso.time({ message: "Digite a hora corretamente" }))
+    ,
+    dayOfWeek: z.string().min(1, { message: "O campo não pode ser vazio" })
+        .pipe(z.enum([
+            "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"
+        ], { message: "Digite o dia corretamente. Exemplo: TUESDAY" }))
+    ,
+    professorId: z.string()
+        .min(1, { message: "O campo não pode ser vazio" })
+        .regex(/^\d+$/, { message: "O campo Id deve conter apenas numeros" })
+    ,
+    courseId: z.string()
+        .min(1, { message: "O campo não pode ser vazio" })
+        .regex(/^\d+$/, { message: "O campo Id deve conter apenas numeros" }),
+})
+
 const AllocationDrawer = ({ isOpen, selectedRow, setOpen, setAction }: AllocationDrawerProps) => {
     const [formData, setFormData] = useState<FormData>(
         {
@@ -57,6 +79,9 @@ const AllocationDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Allocatio
             courseId: selectedRow?.course.id ?? ""
         }
     )
+
+    const [errors, setErrors] = useState<any>([])
+    const [hasError, setHasError] = useState<boolean>(false)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
@@ -78,6 +103,17 @@ const AllocationDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Allocatio
     }
 
     const handleSubmit = async () => {
+        const validatedData = validateData.safeParse(formData)
+        if (!validatedData.success) {
+            const errs = validatedData.error.flatten().fieldErrors
+            setErrors(errs ?? [])
+            setHasError(true)
+            setTimeout(() => {
+                setHasError(false)
+            }, 3000);
+            return
+        }
+
         const { id } = formData
         console.log(formData)
         const res = await fetch(`http://localhost:8080/allocations${(!selectedRow?.action) ? "" : ("/" + id)}`, {
@@ -130,24 +166,28 @@ const AllocationDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Allocatio
                                 </Field.Root>
                             )}
 
-                            <Field.Root required>
+                            <Field.Root required invalid={hasError && errors.dayOfWeek}>
                                 <FieldLabel>Dia da Semana</FieldLabel>
                                 <Input readOnly={selectedRow?.action === "view"} placeholder="Digite o dia da semana" defaultValue={selectedRow?.dayOfWeek} onChange={handleChange} name="dayOfWeek" />
+                                <Field.ErrorText>{errors.dayOfWeek?.[0]}</Field.ErrorText>
                             </Field.Root>
 
-                            <Field.Root required>
+                            <Field.Root required invalid={hasError && errors.startHour}>
                                 <FieldLabel>Hora Inicial</FieldLabel>
                                 <Input readOnly={selectedRow?.action === "view"} placeholder="Digite a hora inicial" defaultValue={selectedRow?.startHour} onChange={handleChange} name="startHour" />
+                                <Field.ErrorText>{errors.startHour?.[0]}</Field.ErrorText>
                             </Field.Root>
 
-                            <Field.Root required>
+                            <Field.Root required invalid={hasError && errors.endHour}>
                                 <FieldLabel>Hora Final</FieldLabel>
                                 <Input readOnly={selectedRow?.action === "view"} placeholder="Digite a hora final" defaultValue={selectedRow?.endHour} onChange={handleChange} name="endHour" />
+                                <Field.ErrorText>{errors.endHour?.[0]}</Field.ErrorText>
                             </Field.Root>
 
-                            <Field.Root required>
+                            <Field.Root required invalid={hasError && errors.professorId}>
                                 <FieldLabel>Professor Id</FieldLabel>
                                 <Input readOnly={selectedRow?.action === "view"} placeholder="Digite o Id do Professor" defaultValue={selectedRow?.professor.id} onChange={handleChange} name="professorId" />
+                                <Field.ErrorText>{errors.professorId?.[0]}</Field.ErrorText>
                             </Field.Root>
 
                             {selectedRow?.action === "view" && <Field.Root required>
@@ -160,9 +200,10 @@ const AllocationDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Allocatio
                                 <Input readOnly defaultValue={selectedRow?.professor.cpf} onChange={handleChange} name="professorCpf" />
                             </Field.Root>}
 
-                            <Field.Root required>
+                            <Field.Root required invalid={hasError && errors.courseId}>
                                 <FieldLabel>Curso Id</FieldLabel>
                                 <Input readOnly={selectedRow?.action === "view"} placeholder="Digite o Id do Curso" defaultValue={selectedRow?.course.id} onChange={handleChange} name="courseId" />
+                                <Field.ErrorText>{errors.courseId?.[0]}</Field.ErrorText>
                             </Field.Root>
 
                             {selectedRow?.action === "view" && <Field.Root required>
