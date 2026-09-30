@@ -2,6 +2,7 @@ import { Button, CloseButton, Drawer, Field, FieldLabel, Input, Stack } from "@c
 import type React from "react"
 import { useState } from "react"
 import { toaster } from "../Toaster"
+import { z } from "zod"
 
 type SelectedRow = {
     id: string,
@@ -34,6 +35,18 @@ const drawerTitles = {
     view: "View Professor"
 }
 
+const validateData = z.object({
+    name: z.string().min(1, { message: "O campo não pode ser vazio" })
+        .regex(/^([^0-9]*)$/, { message: "O campo Nome deve conter apenas letras" })
+    ,
+    cpf: z.string().min(1, { message: "O campo não pode ser vazio" })
+        .regex(/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/, { message: "Digite o CPF corretamente" })
+    ,
+    departmentId: z.string().min(1, { message: "O campo não pode ser vazio" })
+        .regex(/^\d+$/, { message: "O campo Id deve conter apenas numeros" })
+
+})
+
 const ProfessorDrawer = ({ isOpen, setOpen, selectedRow, setAction }: ProfessorDrawerProps) => {
 
     const [formData, setFormData] = useState<FormData>(
@@ -44,6 +57,8 @@ const ProfessorDrawer = ({ isOpen, setOpen, selectedRow, setAction }: ProfessorD
             departmentId: selectedRow?.department.id ?? ""
         }
     )
+    const [errors, setErrors] = useState<any>([{}])
+    const [hasError, setHasError] = useState<boolean>(false)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
@@ -65,6 +80,19 @@ const ProfessorDrawer = ({ isOpen, setOpen, selectedRow, setAction }: ProfessorD
     }
 
     const handleSubmit = async () => {
+
+        const validatedData = validateData.safeParse(formData)
+
+        if (!validatedData.success) {
+            const errs = validatedData.error.flatten().fieldErrors
+            setErrors(errs ?? [{}])
+            setHasError(true)
+            setTimeout(() => {
+                setHasError(false)
+            }, 3000);
+            return
+        }
+
         const { id } = formData
         console.log(formData)
         const res = await fetch(`http://localhost:8080/professors${id ? ("/" + id) : ""}`, {
@@ -117,19 +145,22 @@ const ProfessorDrawer = ({ isOpen, setOpen, selectedRow, setAction }: ProfessorD
                                 </Field.Root>
                             )}
 
-                            <Field.Root required>
+                            <Field.Root required invalid={hasError && errors?.name}>
                                 <FieldLabel>Nome</FieldLabel>
                                 <Input readOnly={selectedRow?.action === "view"} placeholder="Digite o nome do Professor" defaultValue={selectedRow?.name} onChange={handleChange} name="name" />
+                                <Field.ErrorText>{errors?.name?.[0]}</Field.ErrorText>
                             </Field.Root>
 
-                            <Field.Root required>
+                            <Field.Root required invalid={hasError && errors?.cpf}>
                                 <FieldLabel>CPF</FieldLabel>
                                 <Input readOnly={selectedRow?.action === "view"} placeholder="Digite o CPF" defaultValue={selectedRow?.cpf} onChange={handleChange} name="cpf" />
+                                <Field.ErrorText>{errors?.cpf?.[0]}</Field.ErrorText>
                             </Field.Root>
 
-                            <Field.Root required>
+                            <Field.Root required invalid={hasError && errors?.departmentId}>
                                 <FieldLabel>Departamento ID</FieldLabel>
                                 <Input readOnly={selectedRow?.action === "view"} placeholder="Digite o Id do Departamento" defaultValue={selectedRow?.department.id} onChange={handleChange} name="departmentId" />
+                                <Field.ErrorText>{errors?.departmentId?.[0]}</Field.ErrorText>
                             </Field.Root>
 
                             {(!selectedRow?.action) ? undefined : (
