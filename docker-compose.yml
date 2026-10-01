@@ -1,0 +1,23 @@
+services:
+  db_allocation:
+    image: mysql:8.0
+    container_name: db_allocation
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: db_allocation
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "${DB_PORT}:3306"
+
+  professor-allocation:
+    image: mathhen1/professor-allocation:1.0
+    container_name: professor-allocation
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db_allocation
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db_allocation:3306/db_allocation?createDatabaseIfNotExist=true&autoReconnect=true&maxReconnects=10&reconnectAtCheckDelay=5000&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
