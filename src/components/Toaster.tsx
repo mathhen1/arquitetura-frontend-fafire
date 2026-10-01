@@ -1,7 +1,7 @@
-import { createToaster, Toaster as ChakraToaster, Alert } from "@chakra-ui/react"
+import { createToaster, Toaster as ChakraToaster, Alert, CloseButton } from "@chakra-ui/react"
 
 export const toaster = createToaster({
-    placement: "top-end"
+    placement: "top-start"
 })
 
 const Toaster = () => {
@@ -11,16 +11,20 @@ const Toaster = () => {
                 (toast) => (
                     <Alert.Root>
                         <Alert.Indicator />
-                        {toast.title && (
-                            <Alert.Title>
-                                {toast.title}
-                            </Alert.Title>
-                        )}
-                        {toast.description && (
-                            <Alert.Description>
-                                {toast.description}
-                            </Alert.Description>
-                        )}
+                        <Alert.Content>
+                            {toast.title && (
+                                <Alert.Title>
+                                    {toast.title}
+                                </Alert.Title>
+                            )}
+                            {toast.description && (
+                                <Alert.Description>
+                                    {toast.description}
+                                </Alert.Description>
+                            )}
+                        </Alert.Content>
+                        <CloseButton pos="relative" top="-2" insetEnd="-2"
+                            onClick={() => toaster.dismiss()} />
                     </Alert.Root>
                 )
             }
