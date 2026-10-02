@@ -43,6 +43,7 @@ const DepartmentDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Deparment
 
     const [errors, setErrors] = useState<string>("")
     const [hasError, setHasError] = useState<boolean>(false)
+    const [isSubmiting, setIsSubmiting] = useState<boolean>(false)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
@@ -72,7 +73,9 @@ const DepartmentDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Deparment
             }, 3000)
             return
         }
+
         setHasError(false)
+        setIsSubmiting(true)
 
         const { id } = formData
         const res = await fetch(`http://localhost:8080/departments${(!selectedRow?.action) ? "" : ("/" + id)}`, {
@@ -90,6 +93,7 @@ const DepartmentDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Deparment
             return
         }
 
+        setIsSubmiting(false)
         toaster.create({
             title: "Departamento salvo!",
             description: "Requisição foi realizada com sucesso!"
@@ -139,7 +143,8 @@ const DepartmentDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Deparment
                         </Button>
 
                         {selectedRow?.action !== "view" && (
-                            <Button onClick={handleSubmit}>
+                            <Button onClick={handleSubmit}
+                                loading={isSubmiting} disabled={isSubmiting}>
                                 Submit
                             </Button>
                         )}

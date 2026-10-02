@@ -82,6 +82,7 @@ const AllocationDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Allocatio
 
     const [errors, setErrors] = useState<any>([])
     const [hasError, setHasError] = useState<boolean>(false)
+    const [isSubmiting, setIsSubmiting] = useState<boolean>(false)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
@@ -114,8 +115,10 @@ const AllocationDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Allocatio
             return
         }
 
+        setHasError(false)
+        setIsSubmiting(true)
+
         const { id } = formData
-        console.log(formData)
         const res = await fetch(`http://localhost:8080/allocations${(!selectedRow?.action) ? "" : ("/" + id)}`, {
             method: (!selectedRow?.action) ? "POST" : "PUT",
             headers: {
@@ -131,6 +134,7 @@ const AllocationDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Allocatio
             return
         }
 
+        setIsSubmiting(false)
         toaster.create({
             title: "Alocação salva!",
             description: "Requisição foi realizada com sucesso!"
@@ -231,7 +235,8 @@ const AllocationDrawer = ({ isOpen, selectedRow, setOpen, setAction }: Allocatio
                         </Button>
 
                         {selectedRow?.action !== "view" && (
-                            <Button onClick={handleSubmit}>
+                            <Button onClick={handleSubmit}
+                                loading={isSubmiting} disabled={isSubmiting}>
                                 Submit
                             </Button>
                         )}

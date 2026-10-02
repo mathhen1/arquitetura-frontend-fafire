@@ -58,6 +58,7 @@ const CourseDrawer = ({ isOpen, selectedRow, setOpen, setAction }: CourseDrawerP
     }
     const [errors, setErrors] = useState<string>("")
     const [hasError, setHasError] = useState<boolean>(false)
+    const [isSubmiting, setIsSubmiting] = useState<boolean>(false)
 
     const handleSubmit = async () => {
 
@@ -72,7 +73,9 @@ const CourseDrawer = ({ isOpen, selectedRow, setOpen, setAction }: CourseDrawerP
             }, 3000)
             return
         }
+
         setHasError(false)
+        setIsSubmiting(true)
 
         const { id } = formData
         const res = await fetch(`http://localhost:8080/courses${(!selectedRow) ? "" : ("/" + id)}`, {
@@ -87,9 +90,11 @@ const CourseDrawer = ({ isOpen, selectedRow, setOpen, setAction }: CourseDrawerP
             toaster.create({
                 title: "Erro na requisição",
             })
+            setIsSubmiting(false)
             return
         }
 
+        setIsSubmiting(false)
         toaster.create({
             title: "Curso salvo!",
             description: "Requisição foi realizada com sucesso!"
@@ -139,7 +144,8 @@ const CourseDrawer = ({ isOpen, selectedRow, setOpen, setAction }: CourseDrawerP
                         </Button>
 
                         {selectedRow?.action !== "view" && (
-                            <Button onClick={handleSubmit}>
+                            <Button onClick={handleSubmit}
+                                loading={isSubmiting} disabled={isSubmiting}>
                                 Submit
                             </Button>
                         )}

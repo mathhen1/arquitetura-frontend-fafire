@@ -60,6 +60,7 @@ const ProfessorDrawer = ({ isOpen, setOpen, selectedRow, setAction }: ProfessorD
     )
     const [errors, setErrors] = useState<any>([{}])
     const [hasError, setHasError] = useState<boolean>(false)
+    const [isSubmiting, setIsSubmiting] = useState<boolean>(false)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
@@ -94,8 +95,10 @@ const ProfessorDrawer = ({ isOpen, setOpen, selectedRow, setAction }: ProfessorD
             return
         }
 
+        setHasError(false)
+        setIsSubmiting(true)
+
         const { id } = formData
-        console.log(formData)
         const res = await fetch(`http://localhost:8080/professors${id ? ("/" + id) : ""}`, {
             method: id ? "PUT" : "POST",
             headers: {
@@ -111,6 +114,7 @@ const ProfessorDrawer = ({ isOpen, setOpen, selectedRow, setAction }: ProfessorD
             return
         }
 
+        setIsSubmiting(false)
         toaster.create({
             title: "Professor salvo!",
             description: "Requisição foi realizada com sucesso!"
@@ -180,7 +184,8 @@ const ProfessorDrawer = ({ isOpen, setOpen, selectedRow, setAction }: ProfessorD
                         </Button>
 
                         {selectedRow?.action !== "view" && (
-                            <Button onClick={handleSubmit}>
+                            <Button onClick={handleSubmit}
+                                loading={isSubmiting} disabled={isSubmiting}>
                                 Submit
                             </Button>
                         )}
