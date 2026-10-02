@@ -9,6 +9,8 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     ports:
       - "${DB_PORT}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
 
   professor-allocation:
     image: mathhen1/professor-allocation:1.0
@@ -21,3 +23,6 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://db_allocation:3306/db_allocation?createDatabaseIfNotExist=true&autoReconnect=true&maxReconnects=10&reconnectAtCheckDelay=5000&useSSL=false
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+
+volumes:
+  mysql_data:
