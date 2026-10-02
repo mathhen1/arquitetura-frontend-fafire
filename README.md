@@ -1,78 +1,57 @@
-# React + TypeScript + Vite
+# Projeto Arquitetura de Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Aluno: Matheus Henrique**
 
-Currently, two official plugins are available:
+**Turma: Engenharia de Software (2026.1)**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+***Obs: O projeto precisa do Backend rodando junto na máquina local para manipulação dos dados.***
 
-## React Compiler
+## Sobre o Frontend
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+### Frontend deployado na Vercel ###
 
-Note: This will impact Vite dev & build performances.
-You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
+**Link do site: https://mathhen-arquitetura-frontend.vercel.app/**
 
-## Expanding the ESLint configuration
+### Requisitos ###
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- NodeJs
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Como rodar o projeto
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+**No terminal, na pasta raiz, utilize os seguintes comandos:**
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+*Para instalação:*
 
+```bash 
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+*Para rodar o código:*
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash 
+npm run dev
 ```
+
+## Sobre o Backend
+
+### Requisitos
+
+- Docker
+
+### Como rodar o projeto
+
+**No terminal, na pasta raiz, utilize o comando:**
+
+```bash
+docker compose up -d
+```
+
+**O Docker irá instalar o Backend completo e já estará rodando via containers**
+
+***Para parar os containers:***
+
+```bash
+docker compose down 
+```
+
+
